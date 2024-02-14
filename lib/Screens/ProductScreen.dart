@@ -78,15 +78,20 @@ class _ProductScreenState extends State<ProductScreen> {
             ),
             GestureDetector(
               onTap: () {
-                cartitems.add(
-                  CartItem(
-                    name: "hassan",
-                    image: "https://www.digitalsilk.com/wp-content/uploads/2020/05/ecommerce-coronavirus-hero-image.png",
-                    count: 2,
-                    singleprice: 1500,
-                    totalprice: 3000));
+                if (count > 0) {
+                  cartitems.add(CartItem(
+                    name: widget.product.productname!,
+                    image: widget.product.productImg1!,
+                    count: count,
+                    singleprice: widget.product.productPrice!,
+                    totalprice: widget.product.productPrice! * count,
+                  ));
 
-                    print(cartitems!.length);
+                  print(cartitems!.length);
+                }
+                else{
+                SnackBar(content: Text("Please Add Quantity"));
+                }
               },
               child: Container(
                 width: 150.w,
@@ -154,13 +159,14 @@ class _ProductScreenState extends State<ProductScreen> {
                           child: IconButton(
                             onPressed: () {
                               FireStore.AddToWishList(
-                                  "hassan",
-                                  "ldhoihdsdlksl",
-                                  1500,
-                                  2000,
-                                  "djklsdls",
-                                  "dksnds",
-                                  "sjhdkjslkd");
+                                  widget.product.productname!,  
+                                  widget.product.productDescription!,
+                                  widget.product.productPrice!,
+                                  widget.product.productOldPrice!,
+                                  widget.product.productImg1!,
+                                  widget.product.productImg2!,
+                                  widget.product.productImg3!,
+                                  );
                               print("okey");
                             },
                             icon: Icon(

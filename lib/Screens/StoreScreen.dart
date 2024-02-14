@@ -41,7 +41,7 @@ class _StoreScreenState extends State<StoreScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => CategoriesScreen()));
+                              builder: (context) => CategoriesScreen(name: "hxjks",)));
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -123,7 +123,7 @@ class _StoreScreenState extends State<StoreScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => CategoriesScreen()));
+                              builder: (context) => CategoriesScreen(name:"djks")));
                     },
                     child: Container(
                       decoration: BoxDecoration(

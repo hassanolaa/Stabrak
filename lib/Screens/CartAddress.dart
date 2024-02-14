@@ -1,5 +1,6 @@
 import 'package:course/Blogic/Firebase/FireStore.dart';
 import 'package:course/Models/CartItem.dart';
+import 'package:course/Screens/Navi.dart';
 import 'package:course/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fast_forms/flutter_fast_forms.dart';
@@ -8,7 +9,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../theme/theme.dart';
 
 class CartAddress extends StatefulWidget {
-  const CartAddress({super.key});
+  CartAddress({super.key, required this.nettotal});
+  int nettotal;
 
   @override
   State<CartAddress> createState() => _CartAddressState();
@@ -23,6 +25,20 @@ class _CartAddressState extends State<CartAddress> {
   String code = "";
   String phonenumber = "";
   String order = " ";
+  int tax = 50;
+  int delivery = 150;
+  int totalorderr = 0;
+  totalorder() {
+    totalorderr = widget.nettotal + tax + delivery;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    totalorder();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -225,7 +241,7 @@ class _CartAddressState extends State<CartAddress> {
                         height: 20.h,
                       ),
                       Text(
-                        "order price :                    500 ",
+                        "order price :          ${widget.nettotal} ",
                         style: TextStyle(
                             color: AppColors.primaryColor,
                             fontSize: 20.sp,
@@ -255,7 +271,7 @@ class _CartAddressState extends State<CartAddress> {
                         height: 20.h,
                       ),
                       Text(
-                        "Total :                         700 ",
+                        "Total :                        $totalorderr ",
                         style: TextStyle(
                             color: AppColors.primaryColor,
                             fontSize: 20.sp,
@@ -270,13 +286,18 @@ class _CartAddressState extends State<CartAddress> {
                           }
                           // for(int i = 0; i < 5; i++)
 
-                          FireStore.AddOrder(firstname + " " + lastname,
-                              country + " " + city, address, phonenumber, 700,order);
+                          FireStore.AddOrder(
+                              firstname + " " + lastname,
+                              country + " " + city,
+                              address,
+                              code+phonenumber,
+                              totalorderr,
+                              order);
 
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => HomeScreen()));
+                                  builder: (context) => Navi()));
                         },
                         child: Text(
                           "Confirm",

@@ -6,8 +6,8 @@ class Product {
   String? productImg2;
   String? productImg3;
   String? productname;
-  double? productPrice;
-  double? productOldPrice;
+  int? productPrice;
+  int? productOldPrice;
   String? productDescription;
   String? productCategory;
   Color? productColor1;

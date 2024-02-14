@@ -2,6 +2,7 @@ import 'package:course/Screens/HomeScreen.dart';
 import 'package:course/Screen3.dart';
 import 'package:course/Screens/SginUp.dart';
 import 'package:course/Screens/SignIn.dart';
+import 'package:course/Screens/SplashScreen.dart';
 import 'package:course/test.dart';
 import 'package:course/theme/theme.dart';
 import 'package:course/vid/testscreen.dart';
@@ -41,7 +42,7 @@ class MyApp extends StatelessWidget {
           //   "/screen3":(context)=>Screen3()
           // },
           debugShowCheckedModeBanner: false,
-          home: HomeScreen()),
+          home: SplashScreen()),
     );
   }
 }

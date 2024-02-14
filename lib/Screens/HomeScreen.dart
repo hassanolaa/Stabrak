@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:course/Blogic/Firebase/Auth.dart';
 import 'package:course/Screens/CartView.dart';
 import 'package:course/Screens/Cat.dart';
 import 'package:course/Models/Product.dart';
@@ -6,12 +8,15 @@ import 'package:course/Screens/Profile.dart';
 import 'package:course/Screens/StoreScreen.dart';
 import 'package:course/Widgets/Categories.dart';
 import 'package:course/theme/theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../Models/Category.dart';
 import '../Widgets/Product.dart';
+import 'SplashScreen.dart';
+
 class HomeScreen2 extends StatefulWidget {
   const HomeScreen2({super.key});
 
@@ -20,18 +25,24 @@ class HomeScreen2 extends StatefulWidget {
 }
 
 class _HomeScreen2State extends State<HomeScreen2> {
-  
-  List<Categoryclass> list=[
-    Categoryclass(name: "Mobiles",image: "https://images-eu.ssl-images-amazon.com/images/G/42/Egypt-hq/2023/img/Consumer_Electronics/Mobile_Store_Revamp/Mobile_Revamp_DESK/1555676_EG_CE_DT_L2_Apple.jpg"),
-    Categoryclass(name: "Clothes",image: "https://i.imgur.com/6Jz9PzX.png"),
-    Categoryclass(name: "Shoes",image: "https://i.imgur.com/6Jz9PzX.png"),
-    Categoryclass(name: "Bags",image: "https://i.imgur.com/6Jz9PzX.png"),
-  
+  List<Categoryclass> list = [
+    Categoryclass(
+        name: "mobiles",
+        image:
+            "https://m.media-amazon.com/images/I/71xU8w3fHJL._AC_UL480_FMwebp_QL65_.jpg"),
+    Categoryclass(
+        name: "laptops",
+        image:
+            "https://m.media-amazon.com/images/I/81VBQJoT5JL._AC_UL480_FMwebp_QL65_.jpg"),
+    Categoryclass(
+        name: "tablets",
+        image:
+            "https://m.media-amazon.com/images/I/61NGnpjoRDL._AC_UL480_FMwebp_QL65_.jpg"),
+    Categoryclass(
+        name: "Cameras",
+        image:
+            "https://m.media-amazon.com/images/I/410-m0UcKfL._AC_UL480_FMwebp_QL65_.jpg"),
   ];
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -46,15 +57,13 @@ class _HomeScreen2State extends State<HomeScreen2> {
         actions: [
           IconButton(
             icon: Icon(
-              Icons.person,
+              Icons.shopping_cart_outlined,
               color: AppColors.secondaryColor,
               size: 20.sp,
             ),
             onPressed: () {
               Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ProfileScreen()),
-              );
+                  context, MaterialPageRoute(builder: (context) => CartView()));
             },
           ),
           IconButton(
@@ -67,13 +76,17 @@ class _HomeScreen2State extends State<HomeScreen2> {
           ),
           IconButton(
             icon: Icon(
-              Icons.shopping_cart_outlined,
+              Icons.exit_to_app,
               color: AppColors.secondaryColor,
               size: 20.sp,
             ),
             onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => CartView()));
+              Authentication.signOut();
+             if(FirebaseAuth.instance.currentUser==null){
+                   Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => SplashScreen()));
+         
+             }
             },
           ),
         ],
@@ -170,8 +183,11 @@ class _HomeScreen2State extends State<HomeScreen2> {
                 itemCount: list.length,
                 itemBuilder: (context, index) {
                   return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CategoryWidget(category: list[index],),);
+                    padding: const EdgeInsets.all(8.0),
+                    child: CategoryWidget(
+                      category: list[index],
+                    ),
+                  );
                 },
               )),
           SizedBox(
@@ -192,30 +208,43 @@ class _HomeScreen2State extends State<HomeScreen2> {
             ],
           ),
           SizedBox(
-            height: 200.h,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ProductWidget(
-                      product: Product(
-                          productColor1: Colors.black,
-                          productColor2: Colors.blue,
-                          productColor3: Colors.cyanAccent,
-                          productImg1: "https://i.imgur.com/6Jz9PzX.png",
-                          productname: "Product Name",
-                          productPrice: 200.0,
-                          productOldPrice: 300.0,
-                          productImg2: "https://i.imgur.com/O9PcXrv.png",
-                          productImg3:
-                              "https://www.digitalsilk.com/wp-content/uploads/2020/05/ecommerce-coronavirus-hero-image.png",
-                          productDescription: "jndfjkvknvjfvjkdfvkdjvkldjvclljndfjkvknvjfvjkdfvkdjvkldjvclljndfjkvknvjfvjkdfvkdjvkldjvclljndfjkvknvjfvjkdfvkdjvkldjvcll"),
-                    ));
-              },
-            ),
-          ),
+              height: 200.h,
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection("mostOrderd")
+                    .snapshots(),
+                builder: ((context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ProductWidget(
+                            product: Product(
+                              productImg1: snapshot.data!.docs[index]["img1"],
+                              productImg2: snapshot.data!.docs[index]["img2"],
+                              productImg3: snapshot.data!.docs[index]["img3"],
+                              productname: snapshot.data!.docs[index]["name"],
+                              productPrice: snapshot.data!.docs[index]["price"],
+                              productOldPrice: snapshot.data!.docs[index]
+                                  ["oldprice"],
+                              productDescription: snapshot.data!.docs[index]
+                                  ["des"],
+                              productColor1: Colors.black,
+                              productColor2: Colors.blue,
+                              productColor3: Colors.cyanAccent,
+                            ),
+                          ));
+                    },
+                  );
+                }),
+              )),
           SizedBox(
             height: 15.h,
           ),
@@ -234,26 +263,70 @@ class _HomeScreen2State extends State<HomeScreen2> {
             ],
           ),
           SizedBox(
-            height: 200.h,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ProductWidget(
-                      product: Product(
-                        productImg1:
-                            "https://www.digitalsilk.com/wp-content/uploads/2020/05/ecommerce-coronavirus-hero-image.png",
-                        productname: "Product Name",
-                        productPrice: 200.0,
-                      ),
-                    ));
-              },
-            ),
-          ),
+              height: 200.h,
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection("mostsale")
+                    .snapshots(),
+                builder: ((context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ProductWidget(
+                            product: Product(
+                              productImg1: snapshot.data!.docs[index]["img1"],
+                              productImg2: snapshot.data!.docs[index]["img2"],
+                              productImg3: snapshot.data!.docs[index]["img3"],
+                              productname: snapshot.data!.docs[index]["name"],
+                              productPrice: snapshot.data!.docs[index]["price"],
+                              productOldPrice: snapshot.data!.docs[index]
+                                  ["oldprice"],
+                              productDescription: snapshot.data!.docs[index]
+                                  ["des"],
+                              productColor1: Colors.black,
+                              productColor2: Colors.blue,
+                              productColor3: Colors.cyanAccent,
+                            ),
+                          ));
+                    },
+                  );
+                }),
+              )),
         ]),
       ),
     );
   }
 }
+
+
+
+//  ListView.builder(
+//               scrollDirection: Axis.horizontal,
+//               itemCount: 10,
+//               itemBuilder: (context, index) {
+//                 return Padding(
+//                     padding: const EdgeInsets.all(8.0),
+//                     child: ProductWidget(
+//                       product: Product(
+//                           productColor1: Colors.black,
+//                           productColor2: Colors.blue,
+//                           productColor3: Colors.cyanAccent,
+//                           productImg1: "https://i.imgur.com/6Jz9PzX.png",
+//                           productname: "Product Name",
+//                           productPrice: 200.0,
+//                           productOldPrice: 300.0,
+//                           productImg2: "https://i.imgur.com/O9PcXrv.png",
+//                           productImg3:
+//                               "https://www.digitalsilk.com/wp-content/uploads/2020/05/ecommerce-coronavirus-hero-image.png",
+//                           productDescription: "jndfjkvknvjfvjkdfvkdjvkldjvclljndfjkvknvjfvjkdfvkdjvkldjvclljndfjkvknvjfvjkdfvkdjvkldjvclljndfjkvknvjfvjkdfvkdjvkldjvcll"),
+//                     ));
+//               },
+//             ),

@@ -20,6 +20,10 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  final auth=FirebaseAuth.instance;
+  String? email;
+  String? password;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,6 +70,9 @@ class _SignInState extends State<SignIn> {
         Padding(
           padding: const EdgeInsets.all(15.0),
           child: TextField(
+            onChanged: (value) {
+              email = value;
+            },
             controller: _emailController,
             decoration: InputDecoration(
               hintText: "Enter Your Email",
@@ -94,6 +101,10 @@ class _SignInState extends State<SignIn> {
         Padding(
           padding: const EdgeInsets.all(15.0),
           child: TextField(
+            onChanged: (value) {
+              password = value;
+            
+            },
             controller: _passwordController,
             obscureText: true,
             decoration: InputDecoration(
@@ -128,10 +139,19 @@ class _SignInState extends State<SignIn> {
             GestureDetector(
               onTap: () {
                 try {
-                  Authentication.Login(_emailController.text.trim(),
+                 
+                  if(email==null||password==null){
+                    setState(() {
+                    SnackBar(content: Text("Please Enter Your Email And Password"));
+                      
+                    });
+                  }
+                  else{
+                     Authentication.Login(_emailController.text.trim(),
                       _passwordController.text.trim());
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Navi()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Navi()));
+                  }
                 } catch (e) {
                   print(e);
                 }
@@ -165,8 +185,11 @@ class _SignInState extends State<SignIn> {
               onTap: () {
                 try {
                   Authentication.signInWithGoogle();
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Navi()));
+                  if(auth.currentUser!=null){
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Navi()));
+
+                  }
                 } catch (e) {
                   print(e);
                 }
@@ -211,7 +234,7 @@ class _SignInState extends State<SignIn> {
                       MaterialPageRoute(builder: (context) => SignUpScreen()));
                 },
                 child: Text(
-                  "SignIn",
+                  "create one",
                   style: TextStyle(
                       color: AppColors.quaternaryColor,
                       fontSize: 20.sp,

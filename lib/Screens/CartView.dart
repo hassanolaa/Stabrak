@@ -13,6 +13,26 @@ class CartView extends StatefulWidget {
 }
 
 class _CartViewState extends State<CartView> {
+
+    int total = 0;
+
+  totalprice(){
+    for(int i = 0; i<cartitems.length;i++){
+     setState(() {
+      total += cartitems[i].totalprice!;
+      
+     });
+    }
+    return total;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    totalprice();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,10 +51,10 @@ class _CartViewState extends State<CartView> {
               SizedBox(width: 50.w,),
                Text("Total :",style: TextStyle(color: AppColors.secondaryColor,fontSize: 20.sp,fontWeight: FontWeight.bold),),
             SizedBox(width: 20.w,),
-            Text("0",style: TextStyle(color: AppColors.secondaryColor,fontSize: 28.sp,fontWeight: FontWeight.bold),),
-            SizedBox(width: 80.w,),
+            Text(total.toString(),style: TextStyle(color: AppColors.secondaryColor,fontSize: 22.sp,fontWeight: FontWeight.bold),),
+            SizedBox(width: 40.w,),
             ElevatedButton(onPressed: (){
-               Navigator.push(context, MaterialPageRoute(builder: (context) => CartAddress()));
+               Navigator.push(context, MaterialPageRoute(builder: (context) => CartAddress(nettotal: total,)));
 
 
 

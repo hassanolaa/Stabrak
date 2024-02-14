@@ -39,5 +39,16 @@ class Authentication{
 }
 
 
+  static Future<void> signOut() async {
+    await auth.signOut();
+  }
+
+  static Future<bool> loggedin()async{
+   return auth.currentUser!=null;
+  }
+
+
+
+
 
 }
