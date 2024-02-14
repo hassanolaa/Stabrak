@@ -1,6 +1,6 @@
 # course
 
-A new Flutter project.
+Under development
 
 ## Getting Started
 
